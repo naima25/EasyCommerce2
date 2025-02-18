@@ -25,5 +25,5 @@ This project is a fully functional .NET Core Backend API designed and developed 
 
 ### Clone the repository
 
-```bash
-git clone 
+To clone the repository to your local machine, use the following command:
+git clone https://github.com/naima25/EasyCommerce2.git

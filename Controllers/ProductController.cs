@@ -34,5 +34,46 @@ namespace EasyCommerce.Controllers
             }
             return Ok(product);
         }
+
+        // POST: api/Product
+        [HttpPost]
+        public ActionResult<Product> Create(Product newProduct)
+        {
+            newProduct.Id = Products.Count + 1;  // Assigning an ID (simple approach for in-memory data)
+            Products.Add(newProduct);
+            return CreatedAtAction(nameof(Get), new { id = newProduct.Id }, newProduct);
+        }
+
+        // PUT: api/Product/{id}
+        [HttpPut("{id}")]
+        public ActionResult<Product> Update(int id, Product updatedProduct)
+        {
+            var existingProduct = Products.Find(p => p.Id == id);
+            if (existingProduct == null)
+            {
+                return NotFound();
+            }
+
+            // Update properties
+            existingProduct.Name = updatedProduct.Name;
+            existingProduct.Price = updatedProduct.Price;
+            existingProduct.CategoryId = updatedProduct.CategoryId;
+
+            return Ok(existingProduct);
+        }
+
+        // DELETE: api/Product/{id}
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var productToRemove = Products.Find(p => p.Id == id);
+            if (productToRemove == null)
+            {
+                return NotFound();
+            }
+
+            Products.Remove(productToRemove);
+            return NoContent();
+        }
     }
 }

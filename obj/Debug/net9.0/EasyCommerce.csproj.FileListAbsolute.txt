@@ -31,3 +31,4 @@
 /Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.pdb
 /Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.genruntimeconfig.cache
 /Users/naima/EasyCommerce/obj/Debug/net9.0/ref/EasyCommerce.dll
+/Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.sourcelink.json

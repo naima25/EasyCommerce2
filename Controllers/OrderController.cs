@@ -33,5 +33,46 @@ namespace EasyCommerce.Controllers
             }
             return Ok(order);
         }
+
+        // POST: api/Order
+        [HttpPost]
+        public ActionResult<Order> Create(Order newOrder)
+        {
+            newOrder.Id = Orders.Count + 1; // Assigning an ID (simple approach for in-memory data)
+            Orders.Add(newOrder);
+            return CreatedAtAction(nameof(Get), new { id = newOrder.Id }, newOrder);
+        }
+
+        // PUT: api/Order/{id}
+        [HttpPut("{id}")]
+        public ActionResult<Order> Update(int id, Order updatedOrder)
+        {
+            var existingOrder = Orders.Find(o => o.Id == id);
+            if (existingOrder == null)
+            {
+                return NotFound();
+            }
+
+            // Update properties
+            existingOrder.OrderDate = updatedOrder.OrderDate;
+            existingOrder.CustomerId = updatedOrder.CustomerId;
+            existingOrder.TotalAmount = updatedOrder.TotalAmount;
+
+            return Ok(existingOrder);
+        }
+
+        // DELETE: api/Order/{id}
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var orderToRemove = Orders.Find(o => o.Id == id);
+            if (orderToRemove == null)
+            {
+                return NotFound();
+            }
+
+            Orders.Remove(orderToRemove);
+            return NoContent();
+        }
     }
 }
