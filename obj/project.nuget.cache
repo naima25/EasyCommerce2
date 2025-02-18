@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "GD0S0XpPuMs=",
+  "success": true,
+  "projectFilePath": "/Users/naima/EasyCommerce/EasyCommerce.csproj",
+  "expectedPackageFiles": [
+    "/Users/naima/.nuget/packages/microsoft.aspnetcore.openapi/9.0.1/microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
+    "/Users/naima/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
