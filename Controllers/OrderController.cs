@@ -1,6 +1,7 @@
+using EasyCommerce.Data;  // Add the namespace for EasyCommerceContext
+using EasyCommerce.Models; // Your models
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using EasyCommerce.Models;
+using Microsoft.EntityFrameworkCore; // For async database methods
 
 namespace EasyCommerce.Controllers
 {
@@ -8,25 +9,28 @@ namespace EasyCommerce.Controllers
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
-        // Sample in-memory data
-        private static List<Order> Orders = new List<Order>
+        private readonly EasyCommerceContext _context; // DbContext for SQLite
+
+        public OrderController(EasyCommerceContext context)
         {
-            new Order { Id = 1, OrderDate = DateTime.Now, CustomerId = 1, TotalAmount = 50.99m },
-            new Order { Id = 2, OrderDate = DateTime.Now, CustomerId = 2, TotalAmount = 120.49m }
-        };
+            _context = context;
+        }
 
         // GET: api/Order
         [HttpGet]
-        public ActionResult<IEnumerable<Order>> Get()
+        public async Task<ActionResult<IEnumerable<Order>>> Get()
         {
-            return Ok(Orders);
+            // Get all orders from the database
+            var orders = await _context.Orders.ToListAsync();
+            return Ok(orders);
         }
 
         // GET: api/Order/{id}
         [HttpGet("{id}")]
-        public ActionResult<Order> Get(int id)
+        public async Task<ActionResult<Order>> Get(int id)
         {
-            var order = Orders.Find(o => o.Id == id);
+            // Find an order by ID from the database
+            var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
@@ -36,43 +40,52 @@ namespace EasyCommerce.Controllers
 
         // POST: api/Order
         [HttpPost]
-        public ActionResult<Order> Create(Order newOrder)
+        public async Task<ActionResult<Order>> Create(Order newOrder)
         {
-            newOrder.Id = Orders.Count + 1; // Assigning an ID (simple approach for in-memory data)
-            Orders.Add(newOrder);
+            // Add a new order to the database
+            _context.Orders.Add(newOrder);
+            await _context.SaveChangesAsync(); // Save changes to the database
+
+            // Return the created order
             return CreatedAtAction(nameof(Get), new { id = newOrder.Id }, newOrder);
         }
 
         // PUT: api/Order/{id}
         [HttpPut("{id}")]
-        public ActionResult<Order> Update(int id, Order updatedOrder)
+        public async Task<ActionResult<Order>> Update(int id, Order updatedOrder)
         {
-            var existingOrder = Orders.Find(o => o.Id == id);
+            var existingOrder = await _context.Orders.FindAsync(id);
             if (existingOrder == null)
             {
                 return NotFound();
             }
 
-            // Update properties
+            // Update the order properties
             existingOrder.OrderDate = updatedOrder.OrderDate;
             existingOrder.CustomerId = updatedOrder.CustomerId;
             existingOrder.TotalAmount = updatedOrder.TotalAmount;
+
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
 
             return Ok(existingOrder);
         }
 
         // DELETE: api/Order/{id}
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var orderToRemove = Orders.Find(o => o.Id == id);
+            var orderToRemove = await _context.Orders.FindAsync(id);
             if (orderToRemove == null)
             {
                 return NotFound();
             }
 
-            Orders.Remove(orderToRemove);
-            return NoContent();
+            // Remove the order from the database
+            _context.Orders.Remove(orderToRemove);
+            await _context.SaveChangesAsync(); // Save the changes to the database
+
+            return NoContent(); // Return success
         }
     }
 }

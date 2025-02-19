@@ -1,6 +1,7 @@
+using EasyCommerce.Data;  // Add the namespace for EasyCommerceContext
+using EasyCommerce.Models; // Your models
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using EasyCommerce.Models;
+using Microsoft.EntityFrameworkCore; // For async database methods
 
 namespace EasyCommerce.Controllers
 {
@@ -8,25 +9,28 @@ namespace EasyCommerce.Controllers
     [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {
-        // Sample in-memory data
-        private static List<Customer> Customers = new List<Customer>
+        private readonly EasyCommerceContext _context; // DbContext for SQLite
+
+        public CustomerController(EasyCommerceContext context)
         {
-            new Customer { Id = 1, Name = "Customer 1", Email = "customer1@example.com" },
-            new Customer { Id = 2, Name = "Customer 2", Email = "customer2@example.com" }
-        };
+            _context = context;
+        }
 
         // GET: api/Customer
         [HttpGet]
-        public ActionResult<IEnumerable<Customer>> Get()
+        public async Task<ActionResult<IEnumerable<Customer>>> Get()
         {
-            return Ok(Customers);
+            // Get all customers from the database
+            var customers = await _context.Customers.ToListAsync();
+            return Ok(customers);
         }
 
         // GET: api/Customer/{id}
         [HttpGet("{id}")]
-        public ActionResult<Customer> Get(int id)
+        public async Task<ActionResult<Customer>> Get(int id)
         {
-            var customer = Customers.Find(c => c.Id == id);
+            // Find a customer by ID from the database
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -36,42 +40,51 @@ namespace EasyCommerce.Controllers
 
         // POST: api/Customer
         [HttpPost]
-        public ActionResult<Customer> Create(Customer newCustomer)
+        public async Task<ActionResult<Customer>> Create(Customer newCustomer)
         {
-            newCustomer.Id = Customers.Count + 1; // Assigning an ID (simple approach for in-memory data)
-            Customers.Add(newCustomer);
+            // Add a new customer to the database
+            _context.Customers.Add(newCustomer);
+            await _context.SaveChangesAsync(); // Save changes to the database
+
+            // Return the created customer
             return CreatedAtAction(nameof(Get), new { id = newCustomer.Id }, newCustomer);
         }
 
         // PUT: api/Customer/{id}
         [HttpPut("{id}")]
-        public ActionResult<Customer> Update(int id, Customer updatedCustomer)
+        public async Task<ActionResult<Customer>> Update(int id, Customer updatedCustomer)
         {
-            var existingCustomer = Customers.Find(c => c.Id == id);
+            var existingCustomer = await _context.Customers.FindAsync(id);
             if (existingCustomer == null)
             {
                 return NotFound();
             }
 
-            // Update properties
+            // Update the customer properties
             existingCustomer.Name = updatedCustomer.Name;
             existingCustomer.Email = updatedCustomer.Email;
+
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
 
             return Ok(existingCustomer);
         }
 
         // DELETE: api/Customer/{id}
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var customerToRemove = Customers.Find(c => c.Id == id);
+            var customerToRemove = await _context.Customers.FindAsync(id);
             if (customerToRemove == null)
             {
                 return NotFound();
             }
 
-            Customers.Remove(customerToRemove);
-            return NoContent();
+            // Remove the customer from the database
+            _context.Customers.Remove(customerToRemove);
+            await _context.SaveChangesAsync(); // Save the changes to the database
+
+            return NoContent(); // Return success
         }
     }
 }

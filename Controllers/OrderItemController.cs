@@ -1,6 +1,7 @@
+using EasyCommerce.Data;  // Add the namespace for EasyCommerceContext
+using EasyCommerce.Models; // Your models
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using EasyCommerce.Models;
+using Microsoft.EntityFrameworkCore; // For async database methods
 
 namespace EasyCommerce.Controllers
 {
@@ -8,25 +9,28 @@ namespace EasyCommerce.Controllers
     [Route("api/[controller]")]
     public class OrderItemController : ControllerBase
     {
-        // Sample in-memory data
-        private static List<OrderItem> OrderItems = new List<OrderItem>
+        private readonly EasyCommerceContext _context; // DbContext for SQLite
+
+        public OrderItemController(EasyCommerceContext context)
         {
-            new OrderItem { Id = 1, OrderId = 1, ProductId = 1, Quantity = 2, Price = 10.99m },
-            new OrderItem { Id = 2, OrderId = 2, ProductId = 2, Quantity = 1, Price = 20.99m }
-        };
+            _context = context;
+        }
 
         // GET: api/OrderItem
         [HttpGet]
-        public ActionResult<IEnumerable<OrderItem>> Get()
+        public async Task<ActionResult<IEnumerable<OrderItem>>> Get()
         {
-            return Ok(OrderItems);
+            // Get all order items from the database
+            var orderItems = await _context.OrderItems.ToListAsync();
+            return Ok(orderItems);
         }
 
         // GET: api/OrderItem/{id}
         [HttpGet("{id}")]
-        public ActionResult<OrderItem> Get(int id)
+        public async Task<ActionResult<OrderItem>> Get(int id)
         {
-            var orderItem = OrderItems.Find(oi => oi.Id == id);
+            // Find an order item by ID from the database
+            var orderItem = await _context.OrderItems.FindAsync(id);
             if (orderItem == null)
             {
                 return NotFound();
@@ -36,44 +40,53 @@ namespace EasyCommerce.Controllers
 
         // POST: api/OrderItem
         [HttpPost]
-        public ActionResult<OrderItem> Create(OrderItem newOrderItem)
+        public async Task<ActionResult<OrderItem>> Create(OrderItem newOrderItem)
         {
-            newOrderItem.Id = OrderItems.Count + 1; // Assigning an ID (simple approach for in-memory data)
-            OrderItems.Add(newOrderItem);
+            // Add a new order item to the database
+            _context.OrderItems.Add(newOrderItem);
+            await _context.SaveChangesAsync(); // Save changes to the database
+
+            // Return the created order item
             return CreatedAtAction(nameof(Get), new { id = newOrderItem.Id }, newOrderItem);
         }
 
         // PUT: api/OrderItem/{id}
         [HttpPut("{id}")]
-        public ActionResult<OrderItem> Update(int id, OrderItem updatedOrderItem)
+        public async Task<ActionResult<OrderItem>> Update(int id, OrderItem updatedOrderItem)
         {
-            var existingOrderItem = OrderItems.Find(oi => oi.Id == id);
+            var existingOrderItem = await _context.OrderItems.FindAsync(id);
             if (existingOrderItem == null)
             {
                 return NotFound();
             }
 
-            // Update properties
+            // Update the order item properties
             existingOrderItem.OrderId = updatedOrderItem.OrderId;
             existingOrderItem.ProductId = updatedOrderItem.ProductId;
             existingOrderItem.Quantity = updatedOrderItem.Quantity;
             existingOrderItem.Price = updatedOrderItem.Price;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
 
             return Ok(existingOrderItem);
         }
 
         // DELETE: api/OrderItem/{id}
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var orderItemToRemove = OrderItems.Find(oi => oi.Id == id);
+            var orderItemToRemove = await _context.OrderItems.FindAsync(id);
             if (orderItemToRemove == null)
             {
                 return NotFound();
             }
 
-            OrderItems.Remove(orderItemToRemove);
-            return NoContent();
+            // Remove the order item from the database
+            _context.OrderItems.Remove(orderItemToRemove);
+            await _context.SaveChangesAsync(); // Save the changes to the database
+
+            return NoContent(); // Return success
         }
     }
 }
