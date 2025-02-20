@@ -1,25 +1,28 @@
-# Use the official .NET image as the base image
+# Use the official image from Microsoft as a base
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
-# Use the SDK image to build the application
+# Use the official SDK image for building the app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-# Copy the project file(s) and restore the dependencies
+# Copy the project files and restore any dependencies
 COPY ["EasyCommerce.csproj", "./"]
 RUN dotnet restore "EasyCommerce.csproj"
 
-# Copy the rest of the application and publish
+# Copy the rest of the source code and build the project
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src"
 RUN dotnet build "EasyCommerce.csproj" -c Release -o /app/build
+
+# Publish the app to a folder
+FROM build AS publish
 RUN dotnet publish "EasyCommerce.csproj" -c Release -o /app/publish
 
-# Set the entry point for the application
+# Copy the app into the base image and define entrypoint
 FROM base AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "EasyCommerce.dll"]
+
