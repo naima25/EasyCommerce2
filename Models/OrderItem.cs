@@ -1,4 +1,4 @@
-using System;
+using EasyCommerce.Models;
 
 namespace EasyCommerce.Models
 {

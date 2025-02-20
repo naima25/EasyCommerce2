@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 namespace EasyCommerce.Models
 {
     public class Product
@@ -10,6 +11,7 @@ namespace EasyCommerce.Models
         public int CategoryId { get; set; }  // Foreign Key to the Category
 
         // Navigation property: Allows accessing the Category associated with this Product
+        [JsonIgnore]
         public Category? Category { get; set; }  
     }
 }

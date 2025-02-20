@@ -1,6 +1,12 @@
 using EasyCommerce.Models;
 using EasyCommerce.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity; 
+using EasyCommerce.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +14,33 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); // Add controllers to the service collection
 builder.Services.AddDbContext<EasyCommerceContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EasyCommerceConnection"))); // Register DbContext
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<EasyCommerceContext>()
+    .AddDefaultTokenProviders();
+    builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<RolesController>();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                    });
+   
+
 
 
 builder.Services.AddOpenApi();
@@ -21,5 +54,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
 app.Run();
 

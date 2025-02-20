@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace EasyCommerce.Models
 {
@@ -13,6 +14,7 @@ namespace EasyCommerce.Models
         public decimal TotalAmount { get; set; }  
 
         // One-to-many relationship: An order can have many order items
+        [JsonIgnore]
         public List<OrderItem>? OrderItems { get; set; }  // List of order items related to this order
     }
 }

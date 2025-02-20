@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using EasyCommerce.Models; 
+using Microsoft.AspNetCore.Identity;
+using EasyCommerce.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 
 namespace EasyCommerce.Data 
 {
-    public class EasyCommerceContext : DbContext
+    public class EasyCommerceContext : IdentityDbContext<IdentityUser>
     {
         public EasyCommerceContext(DbContextOptions<EasyCommerceContext> options) : base(options)
         {
@@ -17,3 +19,4 @@ namespace EasyCommerce.Data
         public DbSet<Customer> Customers { get; set; }
     }
 }
+

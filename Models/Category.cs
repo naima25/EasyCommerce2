@@ -1,4 +1,5 @@
 using EasyCommerce.Models;
+using System.Text.Json.Serialization;
 
 namespace EasyCommerce.Models
 {
@@ -8,6 +9,7 @@ namespace EasyCommerce.Models
         public string ? Name { get; set; }  
 
         // One-to-many relationship: One Category can have many Products
-        public List<Product> Products { get; set; } = new List<Product>();  
+        [JsonIgnore]
+        public List<Product>? Products { get; set; }
     }
 }
