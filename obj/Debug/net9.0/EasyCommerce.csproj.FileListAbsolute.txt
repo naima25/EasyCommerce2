@@ -19,6 +19,9 @@
 /Users/naima/EasyCommerce/bin/Debug/net9.0/BouncyCastle.Cryptography.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Humanizer.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/MailKit.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.Cryptography.Internal.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.Razor.Language.dll
@@ -48,7 +51,18 @@
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Relational.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Sqlite.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.SqlServer.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Caching.Abstractions.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Caching.Memory.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Configuration.Abstractions.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.DependencyModel.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Identity.Core.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Identity.Stores.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Logging.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Logging.Abstractions.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Options.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Extensions.Primitives.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Identity.Client.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.Identity.Client.Extensions.Msal.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
@@ -95,6 +109,7 @@
 /Users/naima/EasyCommerce/bin/Debug/net9.0/System.Reflection.MetadataLoadContext.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/System.Runtime.Caching.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/System.Security.Cryptography.ProtectedData.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/System.Text.Json.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/af/Humanizer.resources.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/ar/Humanizer.resources.dll
 /Users/naima/EasyCommerce/bin/Debug/net9.0/az/Humanizer.resources.dll
@@ -292,4 +307,3 @@
 /Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.pdb
 /Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.genruntimeconfig.cache
 /Users/naima/EasyCommerce/obj/Debug/net9.0/ref/EasyCommerce.dll
-/Users/naima/EasyCommerce/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll

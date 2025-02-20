@@ -1,90 +1,156 @@
-using EasyCommerce.Data;  // Add the namespace for EasyCommerceContext
-using EasyCommerce.Models; // Your models
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // For async database methods
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using EasyCommerce.Models;
+using EasyCommerce.Interfaces;
 
 namespace EasyCommerce.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly EasyCommerceContext _context; // DbContext for SQLite
+        private readonly ICustomerService _customerService;  // Injecting the customer service
+        private readonly ILogger<CustomerController> _logger;  // Injecting the logger
 
-        public CustomerController(EasyCommerceContext context)
+        public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
         {
-            _context = context;
+            _customerService = customerService;
+            _logger = logger;
         }
 
         // GET: api/Customer
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> Get()
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
-            // Get all customers from the database
-            var customers = await _context.Customers.ToListAsync();
-            return Ok(customers);
+            try
+            {
+                _logger.LogInformation("Fetching all customers.");
+                var customers = await _customerService.GetAllCustomersAsync();
+                if (customers == null || !customers.Any())
+                {
+                    _logger.LogWarning("No customers found.");
+                    return NotFound("No customers found.");
+                }
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching customers.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
 
         // GET: api/Customer/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> Get(int id)
+        public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            // Find a customer by ID from the database
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+            try
             {
-                return NotFound();
+                _logger.LogInformation($"Fetching customer with ID {id}");
+                var customer = await _customerService.GetCustomerByIdAsync(id);
+
+                if (customer == null)
+                {
+                    _logger.LogWarning($"Customer with ID {id} not found.");
+                    return NotFound($"Customer with ID {id} not found.");
+                }
+
+                return Ok(customer);
             }
-            return Ok(customer);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching the customer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
 
         // POST: api/Customer
         [HttpPost]
-        public async Task<ActionResult<Customer>> Create(Customer newCustomer)
+        public async Task<ActionResult<Customer>> CreateCustomer(Customer customer)
         {
-            // Add a new customer to the database
-            _context.Customers.Add(newCustomer);
-            await _context.SaveChangesAsync(); // Save changes to the database
+            try
+            {
+                if (customer == null)
+                {
+                    _logger.LogWarning("Received empty customer object.");
+                    return BadRequest("Customer data cannot be null.");
+                }
 
-            // Return the created customer
-            return CreatedAtAction(nameof(Get), new { id = newCustomer.Id }, newCustomer);
+                await _customerService.AddCustomerAsync(customer);
+                _logger.LogInformation($"Customer with ID {customer.Id} created.");
+                return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating the customer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
 
         // PUT: api/Customer/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult<Customer>> Update(int id, Customer updatedCustomer)
+        public async Task<IActionResult> UpdateCustomer(int id, Customer customer)
         {
-            var existingCustomer = await _context.Customers.FindAsync(id);
-            if (existingCustomer == null)
+            try
             {
-                return NotFound();
+                if (id != customer.Id)
+                {
+                    _logger.LogWarning("Customer ID mismatch.");
+                    return BadRequest("Customer ID mismatch.");
+                }
+
+                await _customerService.UpdateCustomerAsync(id, customer);
+                _logger.LogInformation($"Customer with ID {id} updated.");
+                return NoContent();
             }
-
-            // Update the customer properties
-            existingCustomer.Name = updatedCustomer.Name;
-            existingCustomer.Email = updatedCustomer.Email;
-
-            // Save the changes to the database
-            await _context.SaveChangesAsync();
-
-            return Ok(existingCustomer);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (await _customerService.GetCustomerByIdAsync(id) == null)
+                {
+                    _logger.LogWarning($"Customer with ID {id} not found for update.");
+                    return NotFound($"Customer with ID {id} not found.");
+                }
+                else
+                {
+                    _logger.LogError("Error updating customer.");
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating the customer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
 
         // DELETE: api/Customer/{id}
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
-            var customerToRemove = await _context.Customers.FindAsync(id);
-            if (customerToRemove == null)
+            try
             {
-                return NotFound();
+                var customer = await _customerService.GetCustomerByIdAsync(id);
+                if (customer == null)
+                {
+                    _logger.LogWarning($"Customer with ID {id} not found.");
+                    return NotFound($"Customer with ID {id} not found.");
+                }
+
+                await _customerService.DeleteCustomerAsync(id);
+                _logger.LogInformation($"Customer with ID {id} deleted.");
+                return NoContent();
             }
-
-            // Remove the customer from the database
-            _context.Customers.Remove(customerToRemove);
-            await _context.SaveChangesAsync(); // Save the changes to the database
-
-            return NoContent(); // Return success
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting the customer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
     }
 }
