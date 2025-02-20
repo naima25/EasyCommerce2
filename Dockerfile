@@ -3,6 +3,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 80
 
+# Set environment variables securely
+ENV ASPNETCORE_ENVIRONMENT=Production \
+    ConnectionStrings__DefaultConnection="Server=db;Database=EasyCommerce;User Id=sa;Password=yourStrong(!)Password"
+
 # Use the official SDK image for building the app
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
@@ -24,4 +28,6 @@ RUN dotnet publish "EasyCommerce.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "EasyCommerce.dll"]
+
+# Expose additional environment variables dynamically (optional)
+CMD ["dotnet", "EasyCommerce.dll"]
