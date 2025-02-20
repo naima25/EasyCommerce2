@@ -36,4 +36,3 @@ jobs:
           file: ./EasyCommerce/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dotnetapp:latest
-secrets.DOCKERHUB_USERNAME }}/dotnetapp:latest
