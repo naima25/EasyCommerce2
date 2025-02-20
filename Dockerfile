@@ -8,11 +8,11 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Copy the project files and restore any dependencies
-COPY ["EasyCommerce.csproj", "./"]
+COPY EasyCommerce.csproj ./ 
 RUN dotnet restore "EasyCommerce.csproj"
 
 # Copy the rest of the source code and build the project
-COPY . .
+COPY . . 
 WORKDIR "/src"
 RUN dotnet build "EasyCommerce.csproj" -c Release -o /app/build
 
@@ -25,4 +25,3 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "EasyCommerce.dll"]
-
