@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project is a fully functional .NET Core Backend API designed and developed according to RESTful principles. The project includes essential features such as user authentication, database integration, API development, and unit testing. It follows industry-standard practices like JWT token-based authentication and uses Entity Framework Core for data access.
+This project is a fully functional .NET Core Backend API designed and developed according to RESTful principles. The project includes essential features such as user authentication, database integration, API development, and unit testing. It follows industry-standard practices like JWT token-based authentication and uses Entity Framework Core for data access. This simulates an E-commerce website, where you can buy products and create orders.
 
 ## Features
 
