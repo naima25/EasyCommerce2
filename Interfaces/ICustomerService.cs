@@ -8,9 +8,9 @@ namespace EasyCommerce.Interfaces
     public interface ICustomerService
     {
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
-        Task<Customer> GetCustomerByIdAsync(int id);
+        Task<Customer> GetCustomerByIdAsync(string id);  
         Task AddCustomerAsync(Customer customer);
-        Task UpdateCustomerAsync(int id, Customer customer);
-        Task DeleteCustomerAsync(int id);
+        Task UpdateCustomerAsync(string id, Customer customer);  
+        Task DeleteCustomerAsync(string id);  
     }
 }

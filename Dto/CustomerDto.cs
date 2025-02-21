@@ -4,15 +4,15 @@ namespace EasyCommerce.DTO
 {
     public class CustomerDTO
     {
-        public int Id { get; set; }
-
+        
         [Required]
         [StringLength(100, MinimumLength = 2)]
-        public string ? Name { get; set; }
+        public string? FullName { get; set; }
 
-        [Required]
-        [EmailAddress]
-        public string ? Email { get; set; }
+        // Navigation property to ProductCustomer table (many-to-many relationship with Product)
+        public List<int>? ProductCustomerIds { get; set; } // List of related ProductCustomer IDs
 
+        // Relationship: Orders (List of Order IDs only)
+        public List<int>? OrderIds { get; set; } // List of related Order IDs
     }
 }

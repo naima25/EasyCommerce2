@@ -1,24 +1,15 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using EasyCommerce.Models; 
+
 
 namespace EasyCommerce.Models
 {
-    public class Customer
+    public class Customer : IdentityUser
     {
-        public int Id { get; set; }  
-
-        [Required]
-        [StringLength(100, MinimumLength = 3)]
-        public string? Name { get; set; }  
-
-        [Required]
-        [EmailAddress]
-        public string? Email { get; set; }  
-
-        [Required]
-        [StringLength(15, MinimumLength = 10)]
-        public string? PhoneNumber { get; set; }  
+        public string? FullName { get; set; }  
 
         // One-to-many relationship: A customer can have multiple orders
         [JsonIgnore]

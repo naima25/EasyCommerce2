@@ -48,12 +48,12 @@ namespace EasyCommerce.Controllers
 
         // GET: api/Customer/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        public async Task<ActionResult<Customer>> GetCustomer(string id)  // Change int to string
         {
             try
             {
                 _logger.LogInformation($"Fetching customer with ID {id}");
-                var customer = await _customerService.GetCustomerByIdAsync(id);
+                var customer = await _customerService.GetCustomerByIdAsync(id);  // Ensure this method takes a string id
 
                 if (customer == null)
                 {
@@ -95,7 +95,7 @@ namespace EasyCommerce.Controllers
 
         // PUT: api/Customer/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(int id, Customer customer)
+        public async Task<IActionResult> UpdateCustomer(string id, Customer customer)  // Change int to string
         {
             try
             {
@@ -131,11 +131,11 @@ namespace EasyCommerce.Controllers
 
         // DELETE: api/Customer/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomer(string id)  // Change int to string
         {
             try
             {
-                var customer = await _customerService.GetCustomerByIdAsync(id);
+                var customer = await _customerService.GetCustomerByIdAsync(id);  
                 if (customer == null)
                 {
                     _logger.LogWarning($"Customer with ID {id} not found.");

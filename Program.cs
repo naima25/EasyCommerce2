@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); // Add controllers to the service collection
 builder.Services.AddDbContext<EasyCommerceContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EasyCommerceConnection"))); // Register DbContext
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<Customer, IdentityRole>()
     .AddEntityFrameworkStores<EasyCommerceContext>()
     .AddDefaultTokenProviders();
     builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));

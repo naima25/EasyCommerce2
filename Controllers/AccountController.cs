@@ -18,12 +18,12 @@ namespace EasyCommerce.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<Customer> _userManager;
+        private readonly SignInManager<Customer> _signInManager;
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, EmailService emailService, IConfiguration configuration)
+        public AccountController(UserManager<Customer> userManager, SignInManager<Customer> signInManager, EmailService emailService, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -34,7 +34,7 @@ namespace EasyCommerce.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(AuthModel model)
         {
-            var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+            var user = new Customer { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
@@ -102,7 +102,7 @@ namespace EasyCommerce.Controllers
             await _signInManager.SignOutAsync();
             return Ok("Logged out");
         }
-        private string GenerateJwtToken(IdentityUser user, IList<string> roles)
+        private string GenerateJwtToken(Customer user, IList<string> roles)
         {
             var claims = new List<Claim>
             {
