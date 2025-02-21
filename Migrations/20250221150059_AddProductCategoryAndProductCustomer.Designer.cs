@@ -3,6 +3,7 @@ using System;
 using EasyCommerce.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyCommerce.Migrations
 {
     [DbContext(typeof(EasyCommerceContext))]
-    partial class EasyCommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20250221150059_AddProductCategoryAndProductCustomer")]
+    partial class AddProductCategoryAndProductCustomer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -140,7 +143,7 @@ namespace EasyCommerce.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("ProductCategory");
                 });
 
             modelBuilder.Entity("EasyCommerce.Models.ProductCustomer", b =>
@@ -161,7 +164,7 @@ namespace EasyCommerce.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductCustomers");
+                    b.ToTable("ProductCustomer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
