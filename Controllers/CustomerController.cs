@@ -82,6 +82,9 @@ namespace EasyCommerce.Controllers
                     return BadRequest("Customer data cannot be null.");
                 }
 
+                 // Simulate an error for logging test
+                _logger.LogError("Simulated error: Testing ILogger logging in CreateCustomer method.");
+
                 await _customerService.AddCustomerAsync(customer);
                 _logger.LogInformation($"Customer with ID {customer.Id} created.");
                 return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
