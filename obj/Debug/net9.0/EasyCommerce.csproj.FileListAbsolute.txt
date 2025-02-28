@@ -307,3 +307,6 @@
 /Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.pdb
 /Users/naima/EasyCommerce/obj/Debug/net9.0/EasyCommerce.genruntimeconfig.cache
 /Users/naima/EasyCommerce/obj/Debug/net9.0/ref/EasyCommerce.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/naima/EasyCommerce/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
