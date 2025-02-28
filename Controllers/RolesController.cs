@@ -110,7 +110,7 @@ namespace EasyCommerce.Controllers
                 return NotFound("User not found.");
             }
 
-            var roleExists = await _roleManager.RoleExistsAsync(model.RoleName);
+            var roleExists = await _roleManager.RoleExistsAsync (model.RoleName);
 
             if (!roleExists)
             {

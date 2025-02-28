@@ -17,7 +17,7 @@ RUN dotnet restore "EasyCommerce.csproj"
 
 # Copy the rest of the source code and build the project
 COPY . .
-WORKDIR "/src"
+WORKDIR "/src" 
 RUN dotnet build "EasyCommerce.csproj" -c Release -o /app/build
 
 # Publish the app to a folder
