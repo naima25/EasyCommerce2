@@ -7,11 +7,18 @@ using System.Threading.Tasks;
 
 namespace EasyCommerce.Services
 {
+    // Service class that implements the ICustomerService interface to handle customer-related operations
+    //The service layer encapsulates business logic and data access, making it independent of the controller or UI
+    //Whereas Controller handles the HTTP requests
+    //This allows for better maintainability, testability, and separation of concerns
+   
+
     public class CustomerService : ICustomerService
     {
+
         private readonly EasyCommerceContext _context;
 
-        public CustomerService(EasyCommerceContext context)
+        public CustomerService(EasyCommerceContext context) // Constructor to inject the database context into the service.
         {
             _context = context;
         }
@@ -42,10 +49,10 @@ namespace EasyCommerce.Services
             var existingCustomer = await _context.Customers.FindAsync(id);
             if (existingCustomer == null)
             {
-                return; // Handle customer not found scenario (could throw an exception or return a specific result)
+                return; 
             }
 
-            // Update the properties manually to ensure you are only updating the necessary fields
+            // Update the properties manually 
             existingCustomer.FullName = customer.FullName;
             // Update other properties as needed
 

@@ -1,4 +1,8 @@
 using System.Text.Json.Serialization;
+using EasyCommerce.Models; 
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace EasyCommerce.Models
 {

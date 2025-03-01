@@ -29,5 +29,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Expose additional environment variables dynamically (optional)
+# Expose additional environment variables dynamically 
 CMD ["dotnet", "EasyCommerce.dll"]

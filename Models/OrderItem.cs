@@ -1,4 +1,6 @@
 using EasyCommerce.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace EasyCommerce.Models
 {

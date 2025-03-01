@@ -1,15 +1,19 @@
-using EasyCommerce.Data; // Add the namespace for EasyCommerceContext
-using EasyCommerce.Models; // Your models
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // For async database methods
+using System.Collections.Generic;   
+using System.Threading.Tasks;      
+using EasyCommerce.Data;           
+using EasyCommerce.Models;        
+using Microsoft.AspNetCore.Mvc;    
+using Microsoft.EntityFrameworkCore; 
+
 
 namespace EasyCommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class CategoryController : ControllerBase
-    {
-        private readonly EasyCommerceContext _context; // DbContext for SQLite
+        {
+        // Constructor - Injects the database context (Dependency Injection)
+        private readonly EasyCommerceContext _context; 
 
         public CategoryController(EasyCommerceContext context)
         {
@@ -18,11 +22,12 @@ namespace EasyCommerce.Controllers
 
         // GET: api/Category
         [HttpGet]
+       
         public async Task<ActionResult<IEnumerable<Category>>> Get()
         {
             // Get all categories from the database
             var categories = await _context.Categories.ToListAsync();
-            return Ok(categories);
+            return Ok(categories);  // Return HTTP 200 OK with category list
         }
 
         // GET: api/Category/{id}
@@ -76,14 +81,14 @@ namespace EasyCommerce.Controllers
             var categoryToRemove = await _context.Categories.FindAsync(id);
             if (categoryToRemove == null)
             {
-                return NotFound();
+                return NotFound(); // Returns HTTP 404 if the category does not exist
             }
 
             // Remove the category from the database
             _context.Categories.Remove(categoryToRemove);
             await _context.SaveChangesAsync(); // Save the changes to the database
 
-            return NoContent(); // Return success
-        }
+            return NoContent(); 
     }
+}
 }

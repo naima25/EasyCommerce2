@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EasyCommerce.Data;  // Add the namespace for EasyCommerceContext
-using EasyCommerce.Models; // Your models
+using EasyCommerce.Data;  
+using EasyCommerce.Models; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; // For async database methods
 using Microsoft.Extensions.Logging; // For ILogger

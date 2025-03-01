@@ -15,9 +15,10 @@ namespace EasyCommerce.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerService _customerService;  // Injecting the customer service
-        private readonly ILogger<CustomerController> _logger;  // Injecting the logger
+        private readonly ICustomerService _customerService;  // Injecting the customer service interface to handle business logic
+        private readonly ILogger<CustomerController> _logger;  // Injecting logger to log info, warning + error
 
+         // Constructor that accepts the customer service and logger for dependency injection
         public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
         {
             _customerService = customerService;
@@ -31,7 +32,8 @@ namespace EasyCommerce.Controllers
             try
             {
                 _logger.LogInformation("Fetching all customers.");
-                var customers = await _customerService.GetAllCustomersAsync();
+                var customers = await _customerService.GetAllCustomersAsync(); // Calls the service to get all customers
+                // If no customers are found, return a "Not Found" status
                 if (customers == null || !customers.Any())
                 {
                     _logger.LogWarning("No customers found.");
@@ -53,7 +55,7 @@ namespace EasyCommerce.Controllers
             try
             {
                 _logger.LogInformation($"Fetching customer with ID {id}");
-                var customer = await _customerService.GetCustomerByIdAsync(id);  // Ensure this method takes a string id
+                var customer = await _customerService.GetCustomerByIdAsync(id);  
 
                 if (customer == null)
                 {
@@ -70,6 +72,7 @@ namespace EasyCommerce.Controllers
             }
         }
 
+
         // POST: api/Customer
         [HttpPost]
         public async Task<ActionResult<Customer>> CreateCustomer(Customer customer)
@@ -81,9 +84,6 @@ namespace EasyCommerce.Controllers
                     _logger.LogWarning("Received empty customer object.");
                     return BadRequest("Customer data cannot be null.");
                 }
-
-                 // Simulate an error for logging test
-                _logger.LogError("Simulated error: Testing ILogger logging in CreateCustomer method.");
 
                 await _customerService.AddCustomerAsync(customer);
                 _logger.LogInformation($"Customer with ID {customer.Id} created.");

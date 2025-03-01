@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 using EasyCommerce.Models;
 using Microsoft.AspNetCore.Authorization;
 
+//The RolesController manages operations related to user roles such as creating, updating, deleting, and assigning roles
+//It is protected by the Admin role, meaning only users with the Admin role can access these actions
+
 namespace EasyCommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] 
+    [Authorize(Roles = "Admin")]  // Only admins can perform these actions
 
     public class RolesController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<Customer> _userManager;
 
+        // Constructor to inject RoleManager and UserManager dependencies
         public RolesController(RoleManager<IdentityRole> roleManager, UserManager<Customer> userManager)
         {
             _roleManager = roleManager;
@@ -26,10 +30,10 @@ namespace EasyCommerce.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRoles()
+        public IActionResult GetRoles() // Get all roles from the database
         {
             var roles = _roleManager.Roles.ToList();
-            return Ok(roles);
+            return Ok(roles); // Return the list of roles as the response
         }
 
         [HttpGet("{roleId}")]
@@ -45,6 +49,7 @@ namespace EasyCommerce.Controllers
             return Ok(role);
         }
 
+       // Creates a new role with the specified role name
         [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] string roleName)
         {
@@ -59,6 +64,7 @@ namespace EasyCommerce.Controllers
             return BadRequest(result.Errors);
         }
 
+        // Updates an existing role with a new name
         [HttpPut]
         public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleModel model)
         {
@@ -80,6 +86,8 @@ namespace EasyCommerce.Controllers
             return BadRequest(result.Errors);
         }
 
+        //Deletes a role by its ID
+
         [HttpDelete]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
@@ -100,6 +108,7 @@ namespace EasyCommerce.Controllers
             return BadRequest(result.Errors);
         }
 
+        //  Assigns a specific role to a user
         [HttpPost("assign-role-to-user")]
         public async Task<IActionResult> AssignRoleToUser([FromBody] AssignRoleModel model)
         {

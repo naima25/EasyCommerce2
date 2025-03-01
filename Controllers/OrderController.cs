@@ -69,7 +69,7 @@ namespace EasyCommerce.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
-
+        
         // POST: api/Order
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(Order order)
@@ -84,7 +84,10 @@ namespace EasyCommerce.Controllers
 
                 await _orderService.AddOrderAsync(order);
                 _logger.LogInformation($"Order with ID {order.Id} created.");
-                return CreatedAtAction("GetOrder", new { id = order.Id }, order);
+
+                // Return the order with formatted OrderDate
+                order.OrderDate = DateTime.ParseExact(order.OrderDate.ToString("yyyy-MM-dd"), "yyyy-MM-dd", null); 
+                return CreatedAtAction("GetOrder", new { id = order.Id }, new { order.Id, order.TotalAmount, OrderDate = order.OrderDate.ToString("dd/MM/yyyy") });
             }
             catch (Exception ex)
             {
@@ -92,6 +95,7 @@ namespace EasyCommerce.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+
 
         // PUT: api/Order/{id}
         [HttpPut("{id}")]

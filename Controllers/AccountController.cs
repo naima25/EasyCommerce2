@@ -12,17 +12,22 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
+// AccountController handles user registration, login, email verification, and JWT token generation
+// It allows users to register, log in, log out, and verify their email for account activation.
+
+
 namespace EasyCommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<Customer> _userManager;
-        private readonly SignInManager<Customer> _signInManager;
-        private readonly EmailService _emailService;
-        private readonly IConfiguration _configuration;
+        private readonly UserManager<Customer> _userManager; //UserManager is used to handle operations related to user accounts
+        private readonly SignInManager<Customer> _signInManager; //SignInManager is responsible for handling the authentication of users
+        private readonly EmailService _emailService; // Service for sending emails (e.g., for email verification)
+        private readonly IConfiguration _configuration;  // Access configuration settings, like JWT key
 
+        // Constructor to inject dependencies
         public AccountController(UserManager<Customer> userManager, SignInManager<Customer> signInManager, EmailService emailService, IConfiguration configuration)
         {
             _userManager = userManager;
@@ -57,17 +62,19 @@ namespace EasyCommerce.Controllers
         }
 
 
-        // Add an action to handle email verification
+        
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string userId, string token)
         {
+            // Attempt to find the user by their ID using UserManager
+
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
             {
                 return NotFound("User not found.");
             }
-
+           // Attempt to confirm the user's email using the provided token
             var result = await _userManager.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded)
@@ -83,25 +90,29 @@ namespace EasyCommerce.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(AuthModel model)
         {
+            //Attempt to sign in the user using the provided email and password
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                var roles = await _userManager.GetRolesAsync(user);
-                var token = GenerateJwtToken(user,roles);
+                var user = await _userManager.FindByEmailAsync(model.Email); // If successful, find the user by email using UserManager
+                var roles = await _userManager.GetRolesAsync(user);   // Get the roles of the user (used for role-based authorization)
+                var token = GenerateJwtToken(user,roles);  // Generate a JWT (JSON Web Token) for the logged-in user
                 return Ok(new { Token = token });
             }
 
             return Unauthorized("Invalid login attempt.");
         }
 
+        //Logs out the currently authenticated user
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return Ok("Logged out");
         }
+        
+        // Generates a JWT token for the user, including their roles
         private string GenerateJwtToken(Customer user, IList<string> roles)
         {
             var claims = new List<Claim>
