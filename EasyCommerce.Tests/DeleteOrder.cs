@@ -16,7 +16,7 @@ namespace EasyCommerce.Tests
         [Fact]
         public async Task DeleteOrder_ReturnsNoContent()
         {
-            // Setup In-Memory Database
+            
             var options = new DbContextOptionsBuilder<EasyCommerceContext>()
                 .UseInMemoryDatabase("TestDB")  // Using an in-memory database for testing
                 .Options;
@@ -33,14 +33,14 @@ namespace EasyCommerce.Tests
             // Prepare a sample order for testing
             var order = new Order { OrderDate = DateTime.Now, TotalAmount = 100.0m };
 
-            // Act: Create the order first to ensure it exists
+            // Create the order first to ensure it exists
             await controller.CreateOrder(order);
 
-            // Act: Now call the DeleteOrder method
+            //call the DeleteOrder method
             var result = await controller.DeleteOrder(order.Id);
 
-            // Assert: Verify the result is a NoContentResult (this means the order was deleted)
-            var actionResult = Assert.IsType<NoContentResult>(result);  // Directly check for NoContentResult
+            // Verify the result is a NoContentResult (this means the order was deleted)
+            var actionResult = Assert.IsType<NoContentResult>(result);  
         }
     }
 }

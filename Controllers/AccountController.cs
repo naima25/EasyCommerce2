@@ -96,7 +96,7 @@ namespace EasyCommerce.Controllers
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email); // If successful, find the user by email using UserManager
-                var roles = await _userManager.GetRolesAsync(user);   // Get the roles of the user (used for role-based authorization)
+                var roles = await _userManager.GetRolesAsync(user);   // Get the roles of the user (used for role-based authorisation)
                 var token = GenerateJwtToken(user,roles);  // Generate a JWT (JSON Web Token) for the logged-in user
                 return Ok(new { Token = token });
             }

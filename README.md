@@ -1,27 +1,50 @@
 # .NET Core Backend API
 
 ## Project Overview
+Project Overview
 
-This project is a fully functional .NET Core Backend API designed and developed according to RESTful principles. The project includes essential features such as user authentication, database integration, API development, and unit testing. It follows industry-standard practices like JWT token-based authentication and uses Entity Framework Core for data access. This simulates an E-commerce website, where you can buy products and create orders.
+This project is a functional .NET Core Backend API designed and developed following RESTful principles. It includes essential features such as user authentication, database integration, API development, and unit testing. The API simulates an E-commerce website, allowing users to browse products, create orders, and manage authentication.
 
-## Features
+### Key Technologies:
 
-- RESTful API design
-- JWT Authentication & Authorization
-- Use of Entity Framework Core for Database interaction
-- Secure and efficient password handling with ASP.NET Core Identity
-- Unit tests for critical components
-- Dockerization for deployment
+ASP.NET Core 6.0 for backend development
 
-## Requirements
+Entity Framework Core for data access
 
-- .NET Core 6.0 (or later)
-- Entity Framework Core
-- SQLite (or your chosen database)
-- Docker (for containerization)
-- Postman or similar API testing tool for testing endpoints
+JWT token-based authentication for security
 
-## Project Setup
+ASP.NET Core Identity for user management
+
+Docker for easy deployment
+
+Unit testing for critical components
+
+### Features
+
+RESTful API design for scalable and maintainable endpoints
+
+JWT Authentication & Authorization to secure API access
+
+Entity Framework Core for database interactions
+
+Unit Tests to ensure system reliability
+
+Dockerisation for deployment
+
+### Requirements
+
+To run this project locally, ensure you have the following:
+
+.NET Core 6.0 (or later)
+
+Entity Framework Core
+
+SQLite (or your preferred database)
+
+Docker (for containerization)
+
+Postman (or a similar API testing tool)
+
 
 ### Clone the repository
 
