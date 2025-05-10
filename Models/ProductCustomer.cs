@@ -2,15 +2,14 @@ namespace EasyCommerce.Models
 {
     public class ProductCustomer
     {
-         public int Id { get; set; }  // Primary Key
+        public int Id { get; set; }  // Primary Key
+
         // Foreign key to Product
         public int ProductId { get; set; }
-        public Product ? Product { get; set; }  // Navigation property to Product
+        public Product? Product { get; set; }  // Navigation property to Product
 
-
-        public Customer ? Customer { get; set; }  // Navigation property to Customer
-
-       
+        // Foreign key to Customer
+        public string CustomerId { get; set; }  // Foreign key property
+        public Customer? Customer { get; set; }  // Navigation property to Customer
     }
 }
-

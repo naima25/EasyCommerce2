@@ -15,10 +15,10 @@ namespace EasyCommerce.Repositories
             _context = context;
         }
 
-        // Retrieves all Products from the database asynchronously
+        // Retrieves Products from the database asynchronously
         public async Task<IEnumerable<Product>> GetAllAsync() => await _context.Products.ToListAsync();
 
-        // Retrieves all Products by ID from the database asynchronously
+        // Retrieves a Products by ID from the database asynchronously
         public async Task<Product> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
 
         // Adds a Product to the database asynchronously
@@ -47,3 +47,4 @@ namespace EasyCommerce.Repositories
         }
     }
 }
+

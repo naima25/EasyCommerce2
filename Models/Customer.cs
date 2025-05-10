@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using EasyCommerce.Models; 
+using System.Text.Json.Serialization;
 
 
 namespace EasyCommerce.Models
@@ -12,6 +13,7 @@ namespace EasyCommerce.Models
         public string? FullName { get; set; }  
 
         // One-to-many relationship: A customer can have multiple orders
+        // [JsonIgnore]
         public List<Order>? Orders { get; set; }  
 
         // Navigation property to ProductCustomer table (Many-to-Many with Product)

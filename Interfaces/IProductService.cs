@@ -6,13 +6,13 @@ using EasyCommerce.DTO;
 namespace EasyCommerce.Interfaces
 {
     public interface IProductService
-    {
+{
     Task<IEnumerable<Product>> GetAllProductsAsync();
+    Task<IEnumerable<Product>> GetFeaturedProductsAsync();
     Task<Product> GetProductByIdAsync(int id);
     Task AddProductAsync(Product product);
     Task UpdateProductAsync(int id, Product product);
     Task DeleteProductAsync(int id);
-    
- }
 }
 
+}

@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using EasyCommerce.Data;
 using EasyCommerce.Models;
-using EasyCommerce.Interfaces;
 
 namespace EasyCommerce.Controllers
 {
@@ -15,12 +16,12 @@ namespace EasyCommerce.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderService _orderService;  // Injecting the order service
-        private readonly ILogger<OrderController> _logger;  // Injecting the logger
+        private readonly EasyCommerceContext _context;
+        private readonly ILogger<OrderController> _logger;
 
-        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
+        public OrderController(EasyCommerceContext context, ILogger<OrderController> logger)
         {
-            _orderService = orderService;
+            _context = context;
             _logger = logger;
         }
 
@@ -30,13 +31,19 @@ namespace EasyCommerce.Controllers
         {
             try
             {
-                _logger.LogInformation("Fetching all orders.");
-                var orders = await _orderService.GetAllOrdersAsync();
+                _logger.LogInformation("Fetching all orders with customers and items.");
+                var orders = await _context.Orders
+                    .Include(o => o.Customer)
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
+                    .ToListAsync();
+
                 if (orders == null || !orders.Any())
                 {
                     _logger.LogWarning("No orders found.");
                     return NotFound("No orders found.");
                 }
+
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -52,8 +59,12 @@ namespace EasyCommerce.Controllers
         {
             try
             {
-                _logger.LogInformation($"Fetching order with ID {id}");
-                var order = await _orderService.GetOrderByIdAsync(id);
+                _logger.LogInformation($"Fetching order {id} with customer and items.");
+                var order = await _context.Orders
+                    .Include(o => o.Customer)
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
+                    .FirstOrDefaultAsync(o => o.Id == id);
 
                 if (order == null)
                 {
@@ -69,7 +80,7 @@ namespace EasyCommerce.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
-        
+
         // POST: api/Order
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(Order order)
@@ -82,12 +93,44 @@ namespace EasyCommerce.Controllers
                     return BadRequest("Order data cannot be null.");
                 }
 
-                await _orderService.AddOrderAsync(order);
-                _logger.LogInformation($"Order with ID {order.Id} created.");
+                _logger.LogInformation("Creating new order for customer: {CustomerId}", order.CustomerId);
 
-                // Return the order with formatted OrderDate
-                order.OrderDate = DateTime.ParseExact(order.OrderDate.ToString("yyyy-MM-dd"), "yyyy-MM-dd", null); 
-                return CreatedAtAction("GetOrder", new { id = order.Id }, new { order.Id, order.TotalAmount, OrderDate = order.OrderDate.ToString("dd/MM/yyyy") });
+                // Verify customer exists
+                var customerExists = await _context.Customers.AnyAsync(c => c.Id == order.CustomerId);
+                if (!customerExists)
+                {
+                    _logger.LogWarning("Customer with ID {CustomerId} not found.", order.CustomerId);
+                    return NotFound($"Customer with ID {order.CustomerId} not found.");
+                }
+
+                // Clear navigation properties to prevent duplicate inserts
+                order.Customer = null;
+                if (order.OrderItems != null)
+                {
+                    foreach (var item in order.OrderItems)
+                    {
+                        item.Product = null;
+                    }
+                }
+
+                // Set order date if not provided
+                if (order.OrderDate == default)
+                {
+                    order.OrderDate = DateTime.UtcNow;
+                }
+
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                // Reload the complete order with relationships
+                var createdOrder = await _context.Orders
+                    .Include(o => o.Customer)
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
+                    .FirstOrDefaultAsync(o => o.Id == order.Id);
+
+                _logger.LogInformation("Successfully created order with ID: {OrderId}", createdOrder.Id);
+                return CreatedAtAction(nameof(GetOrder), new { id = createdOrder.Id }, createdOrder);
             }
             catch (Exception ex)
             {
@@ -95,7 +138,6 @@ namespace EasyCommerce.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
-
 
         // PUT: api/Order/{id}
         [HttpPut("{id}")]
@@ -109,22 +151,63 @@ namespace EasyCommerce.Controllers
                     return BadRequest("Order ID mismatch.");
                 }
 
-                await _orderService.UpdateOrderAsync(id, order);
-                _logger.LogInformation($"Order with ID {id} updated.");
-                return NoContent();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (await _orderService.GetOrderByIdAsync(id) == null)
+                _logger.LogInformation($"Updating order with ID {id}");
+
+                var existingOrder = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
+                if (existingOrder == null)
                 {
                     _logger.LogWarning($"Order with ID {id} not found for update.");
                     return NotFound($"Order with ID {id} not found.");
                 }
-                else
+
+                // Verify customer exists if changing customer
+                if (existingOrder.CustomerId != order.CustomerId)
                 {
-                    _logger.LogError("Error updating order.");
-                    throw;
+                    var customerExists = await _context.Customers.AnyAsync(c => c.Id == order.CustomerId);
+                    if (!customerExists)
+                    {
+                        _logger.LogWarning("Customer with ID {CustomerId} not found.", order.CustomerId);
+                        return NotFound($"Customer with ID {order.CustomerId} not found.");
+                    }
                 }
+
+                // Update properties
+                existingOrder.CustomerId = order.CustomerId;
+                existingOrder.Price = order.Price;
+                existingOrder.OrderDate = order.OrderDate;
+
+                // Handle order items updates if needed
+                // Update order item quantities
+                foreach (var updatedItem in order.OrderItems)
+                {
+                    var existingItem = existingOrder.OrderItems
+                        .FirstOrDefault(oi => oi.Id == updatedItem.Id);
+
+                    if (existingItem != null)
+                    {
+                        existingItem.Quantity = updatedItem.Quantity;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Reload the complete order with relationships
+                var updatedOrder = await _context.Orders
+                    .Include(o => o.Customer)
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
+                _logger.LogInformation($"Order with ID {id} updated successfully.");
+                return Ok(updatedOrder);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogError(ex, "Concurrency error while updating order.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Concurrency issue while updating the order.");
             }
             catch (Exception ex)
             {
@@ -139,15 +222,28 @@ namespace EasyCommerce.Controllers
         {
             try
             {
-                var order = await _orderService.GetOrderByIdAsync(id);
+                _logger.LogInformation($"Deleting order with ID {id}.");
+                
+                // Include related OrderItems in the query
+                var order = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
                 if (order == null)
                 {
                     _logger.LogWarning($"Order with ID {id} not found.");
                     return NotFound($"Order with ID {id} not found.");
                 }
 
-                await _orderService.DeleteOrderAsync(id);
-                _logger.LogInformation($"Order with ID {id} deleted.");
+                // Remove all order items first
+                _context.OrderItems.RemoveRange(order.OrderItems);
+                
+                // Then remove the order
+                _context.Orders.Remove(order);
+                
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Order with ID {id} deleted successfully.");
                 return NoContent();
             }
             catch (Exception ex)
@@ -156,5 +252,5 @@ namespace EasyCommerce.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+        }
     }
-}

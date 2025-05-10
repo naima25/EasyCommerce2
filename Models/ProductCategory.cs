@@ -1,14 +1,18 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace EasyCommerce.Models
 {
     public class ProductCategory
     {
-         public int Id { get; set; }  // Primary Key
-        // Foreign key to Product
+        [Key]
+        public int Id { get; set; }
         public int ProductId { get; set; }
-        public Product ? Product { get; set; }  // Navigation property to Product
 
-        // Foreign key to Category
+        [JsonIgnore]
+        public Product Product { get; set; }
+
         public int CategoryId { get; set; }
-        public Category ? Category { get; set; }  // Navigation property to Category
+        public Category Category { get; set; }
     }
 }

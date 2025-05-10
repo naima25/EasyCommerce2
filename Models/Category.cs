@@ -1,18 +1,15 @@
-using System.Text.Json.Serialization;
-using EasyCommerce.Models; 
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
-
+using System.Text.Json.Serialization;
+ 
 namespace EasyCommerce.Models
 {
     public class Category
     {
-        public int Id { get; set; }  
-        public string? Name { get; set; }  
-
-        // Many-to-many relationship: One Category can have many Products via ProductCategory
+        public int Id { get; set; }
+        public string? Name { get; set; }
+ 
+        // Many-to-many relationship with Product through ProductCategory
         [JsonIgnore]
-        public List<ProductCategory>? ProductCategories { get; set; }  // This links to the ProductCategory table
+        public List<ProductCategory>? ProductCategories { get; set; }
     }
 }

@@ -1,0 +1,45 @@
+
+
+* d3f5484 Updated changes to controllers/models
+* 32b73d1 Addiional folder created
+* 3da4be1 Fixing Merge Conflict
+* 528c408 Assembly files commited
+* 96f7ec5 Swashbuckle implemntation
+* 5e82f30 Added ILogger in controller entities as well as try-catch blocks to detect errors
+* 1c6675a Updated Customer model to integrate IdentityUser
+* 2aa29d2 Added ProductCategory and ProductCustomer tables, and updated migrations
+*   c3daa4f Merge pull request #1 from naima25/Feature-ReadMe-Update
+|\  
+| * 3acf4d3 Update to ReadMe file
+|/  
+*   e4de48b Merge branch 'feature/initial-implementation' of https://github.com/naima25/EasyCommerce2 into feature/initial-implementation  the commit.
+|\  
+| * 6e8f227 Pushing docker-build to main.yml
+* | 3b1e0ba AssemblyInfo
+|/  
+* f0dd6bd Updated Dockerfile to handle environment variables securely
+* 791a2e8 Updated Dockerfile to use .NET 9.0 for compatibility with the project
+* e6e504f Fix Dockerfile and csproj path issue
+* 41eb057 Fix Dockerfile paths for EasyCommerce.csproj
+*   da9c411 Merge branch 'feature/initial-implementation' of https://github.com/naima25/EasyCommerce2 into feature/initial-implementation "Merge changes from feature/initial-implementation branch"
+|\  
+| * 810a3d4 Update docker-build.yml
+| * 95f1904 Update docker-build.yml
+* | b65b6eb Update Dockerfile with corrected paths for EasyCommerce
+|/  
+* 7635920 Update DTOs and Models
+*   06342bc Fix merge conflict and update Dockerfile path in docker-build.yml
+|\  
+| * 24cf97e Update docker-build.yml
+| * 8454891 Update docker-build.yml
+| * 89542ed Update docker-build.yml
+* | 6af32a7 Added Dockerfile for .NET application
+|/  
+* 7cbd5bd Updated CI/CD pipeline to build and push Docker image
+* 1be2322 Configure GitHub Actions for CI/CD pipeline: Build and push Docker image for EasyCommerce app
+* 5ae5890 Implement business logic separation, dependency injection, and repository pattern
+* 7e626de Setup Identity, JWT auth, email service, and role-based access control
+* 0848e7c Remove your-database.db
+* 950d84b Set up Entity Framework, connected to SQLite database, and created initial models
+* 03d50d1 Add CRUD operations for Product, Category, Customer, Order, and OrderItem controllers
+* 31ab9d8 Initial commit with models and controllers

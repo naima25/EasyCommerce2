@@ -1,1 +1,5 @@
-{}
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "bin/Release/net9.0/publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/61529bf6-6b2a-4e94-8f5f-71ffbdc3f110/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/MyEasyCommerceWebApi"
+}

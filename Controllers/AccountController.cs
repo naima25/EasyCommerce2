@@ -124,8 +124,11 @@ namespace EasyCommerce.Controllers
             // Add roles as claims
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim("role", role));
             }
+
+            // add user id as a claim
+            claims.Add(new Claim("userId", user.Id.ToString()));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

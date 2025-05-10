@@ -16,27 +16,39 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Register services before building the app
 
-builder.Services.AddControllers(); // This is an example of dependency Injection (DI)
+builder.Services.AddControllers(); 
 
-//Register DbContext with SQL LITE 
-//Sets up database connection and allows Entity Framework to handle database operations
-//DI will inject the EasyCommerceContext wherever needed
+//Retrieve connection string from appsettings.son
 builder.Services.AddDbContext<EasyCommerceContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EasyCommerceConnection"))); 
-    
-// Add Identity service with the Customer entity and IdentityRole
-// This allows your app to manage user authentication and roles, and DI will
-// inject the UserManager and SignInManager wherever needed in the application
+
+
+
+// Configure CORS to allow the React app
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")  // Your React app's URL
+              .AllowAnyHeader()                   // Allow any headers
+              .AllowAnyMethod();                  // Allow any HTTP method (GET, POST, etc.)
+    });
+});
+
+//Identity services helps to manage user authentication and roles
 builder.Services.AddIdentity<Customer, IdentityRole>()
     .AddEntityFrameworkStores<EasyCommerceContext>()
     .AddDefaultTokenProviders();
 
-//Configure the EmailSettings section from appsettings.json to inject EmailSettings via DI
+//Configure the EmailSettings and Email services
     builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+    builder.Services.AddScoped<EmailService>();
 
- //Scoped means a new instance is created per request
-builder.Services.AddScoped<EmailService>();
+//Register the roles controller
 builder.Services.AddScoped<RolesController>();
+
+
+//Services - business logic layer
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
@@ -89,6 +101,10 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build(); 
+app.UseStaticFiles(); 
+app.MapGet("/test-image", () => Results.Ok("Static files are working!"));
+
+app.UseCors("AllowReactApp");
 
 if (app.Environment.IsDevelopment())
 {
@@ -99,6 +115,7 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty; 
     });
 }
+
 
    
 app.UseHttpsRedirection();

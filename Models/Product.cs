@@ -1,26 +1,40 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
+using System.ComponentModel.DataAnnotations;
+ 
 namespace EasyCommerce.Models
+
 {
     public class Product
+
     {
-        public int Id { get; set; }  
-
+        public int Id { get; set; }
+ 
         [Required]
+
         [StringLength(100, MinimumLength = 3)]
-        public string? Name { get; set; }  
 
-        [Required]
+        public string? Name { get; set; }
+ 
+        
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
-        public decimal Price { get; set; }  
 
-        // Navigation property to ProductCategory table (Many-to-Many)
-        public List<ProductCategory>? ProductCategories { get; set; }  
+        public decimal Price { get; set; }
+ 
+        public bool Featured { get; set; } = false;
+ 
+        public string ? ImageUrl { get; set; }
+ 
+        // Many-to-many relationship with Category through ProductCategory
 
-        // Navigation property to ProductCustomer table (Many-to-Many with Customer)
-        public List<ProductCustomer>? ProductCustomers { get; set; }  // Tracks customers who purchased this product
+        public List<ProductCategory>? ProductCategories { get; set; }
+ 
+        // (Optional) Many-to-many with customers
+
+        public List<ProductCustomer>? ProductCustomers { get; set; }
+
     }
+
 }
+
+ 

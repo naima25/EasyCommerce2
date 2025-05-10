@@ -1,21 +1,18 @@
-using EasyCommerce.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EasyCommerce.Models
 {
     public class OrderItem
     {
-        public int Id { get; set; }  
-        public int Quantity { get; set; }  
-        
-       
-        public int OrderId { get; set; }  
-        
-        // Relationship: Many OrderItems can belong to one Product (Many-to-One)
-        public int ProductId { get; set; }   // Foreign Key: This links the OrderItem to a specific Product
-        
-        public decimal Price { get; set; }  
+        public int Id { get; set; }
+
+        [Required]
+        public int ProductId { get; set; }
+        public Product ? Product { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
+        public int Quantity { get; set; }
     }
 }
-
