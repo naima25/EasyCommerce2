@@ -42,48 +42,57 @@ namespace EasyCommerce.Controllers
             var user = new Customer { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
+            // if (result.Succeeded)
+            // {
+            //     Generate an email verification token
+            //     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            //     // Create the verification link
+            //     var verificationLink = Url.Action("VerifyEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+
+            //     // Send the verification email
+            //     var emailSubject = "Email Verification";
+            //     var emailBody = $"Please verify your email by clicking the following link: {verificationLink}";
+            //     _emailService.SendEmail(user.Email, emailSubject, emailBody);
+                
+               
+            //     return Ok("User registered successfully. An email verification link has been sent.");
+            // }
+
             if (result.Succeeded)
             {
-                // Generate an email verification token
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                // Create the verification link
-                var verificationLink = Url.Action("VerifyEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
-
-                // Send the verification email
-                var emailSubject = "Email Verification";
-                var emailBody = $"Please verify your email by clicking the following link: {verificationLink}";
-                _emailService.SendEmail(user.Email, emailSubject, emailBody);
-               
-                return Ok("User registered successfully. An email verification link has been sent.");
+                var roles = await _userManager.GetRolesAsync(user);   // Get the roles of the user (used for role-based authorisation)
+                var token = GenerateJwtToken(user,roles);  // Generate a JWT (JSON Web Token) for the registered user
+                return Ok(new { Token = token });
             }
+
 
             return BadRequest(result.Errors);
         }
 
 
         
-        [HttpGet("verify-email")]
-        public async Task<IActionResult> VerifyEmail(string userId, string token)
-        {
-            // Attempt to find the user by their ID using UserManager
+        // [HttpGet("verify-email")]
+        // public async Task<IActionResult> VerifyEmail(string userId, string token)
+        // {
+        //     // Attempt to find the user by their ID using UserManager
 
-            var user = await _userManager.FindByIdAsync(userId);
+        //     var user = await _userManager.FindByIdAsync(userId);
 
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-           // Attempt to confirm the user's email using the provided token
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+        //     if (user == null)
+        //     {
+        //         return NotFound("User not found.");
+        //     }
+        //    // Attempt to confirm the user's email using the provided token
+        //     var result = await _userManager.ConfirmEmailAsync(user, token);
 
-            if (result.Succeeded)
-            {
-                return Ok("Email verification successful.");
-            }
+        //     if (result.Succeeded)
+        //     {
+        //         return Ok("Email verification successful.");
+        //     }
 
-            return BadRequest("Email verification failed.");
-        }
+        //     return BadRequest("Email verification failed.");
+        // }
 
 
 
