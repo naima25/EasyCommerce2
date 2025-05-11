@@ -25,13 +25,16 @@ builder.Services.AddDbContext<EasyCommerceContext>(options =>
 
 
 // Configure CORS to allow the React app
+var corsOrigins = builder.Configuration["AllowedHosts"]?.Split(';') 
+                  ?? new[] { "http://localhost:5173" }; // Default fallback
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")  // Your React app's URL
-              .AllowAnyHeader()                   // Allow any headers
-              .AllowAnyMethod();                  // Allow any HTTP method (GET, POST, etc.)
+        policy.WithOrigins(corsOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -122,8 +125,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Map incoming HTTP requests to their appropriate controllers and actions
-app.MapControllers();
+
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
+app.Logger.LogInformation("Application starting up...");
 app.Run();
 

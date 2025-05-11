@@ -50,7 +50,7 @@ namespace EasyCommerce.Controllers
             //     // Create the verification link
             //     var verificationLink = Url.Action("VerifyEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
 
-            //     // Send the verification email
+            //     // Send the verification email 
             //     var emailSubject = "Email Verification";
             //     var emailBody = $"Please verify your email by clicking the following link: {verificationLink}";
             //     _emailService.SendEmail(user.Email, emailSubject, emailBody);
