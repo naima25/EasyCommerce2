@@ -27,9 +27,9 @@ builder.Services.AddDbContext<EasyCommerceContext>(options =>
 // Configure CORS to allow the React app
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://zealous-river-08d1f7b10.6.azurestaticapps.net")  // Your React app's URL
+        policy.AllowAnyOrigin()  // Your React app's URL
               .AllowAnyHeader()                   // Allow any headers
               .AllowAnyMethod();                  // Allow any HTTP method (GET, POST, etc.)
     });
@@ -102,10 +102,11 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build(); 
+app.UseCors("AllowAll");
 app.UseStaticFiles(); 
 app.MapGet("/test-image", () => Results.Ok("Static files are working!"));
 
-app.UseCors("AllowReactApp");
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -116,6 +117,8 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty; 
     });
 }
+
+
 
 
    
